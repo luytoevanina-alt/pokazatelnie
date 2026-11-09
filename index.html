@@ -156,9 +156,50 @@
             line-height: 1;
         }
 
+        /* Ненавязчивая ссылка на группу ВК в верхнем правом углу */
+        .vk-corner-link {
+            position: fixed;
+            top: 12px;
+            right: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(0, 119, 255, 0.75);
+            border-radius: 16px;
+            text-decoration: none;
+            opacity: 0.55;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+        .vk-corner-link:hover {
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+        .vk-corner-link .vk-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+        }
+
     </style>
 </head>
 <body>
+
+<a class="vk-corner-link" href="https://vk.ru/country_tutor" target="_blank" rel="noopener noreferrer" aria-label="Группа ВКонтакте">
+    <span class="vk-badge">VK</span>
+    <span>Группа ВК</span>
+</a>
 
 <div class="container">
 
