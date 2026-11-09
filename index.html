@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажёр: Показательные уравнения, неравенства и системы</title>
+    <!-- Подключение MathJax для красивого отображения формул -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-eq: #e8f4f8;
+            --bg-ineq: #fdf5e6;
+            --bg-sys: #f0f8f0;
+            --text-color: #333;
+            --cell-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        h1, h2 { margin-top: 0; }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 25px;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Раздел 1: Уравнения (Голубой) */
+        .section-equations { background-color: var(--bg-eq); border-top: 5px solid #4a90e2; }
+        .section-equations h2 { color: #2c3e50; }
+        
+        /* Раздел 2: Неравенства (Оранжевый/Персиковый) */
+        .section-inequalities { background-color: var(--bg-ineq); border-top: 5px solid #e67e22; }
+        .section-inequalities h2 { color: #d35400; }
+
+        /* Раздел 3: Системы (Зеленый) */
+        .section-systems { background-color: var(--bg-sys); border-top: 5px solid #27ae60; }
+        .section-systems h2 { color: #2e7d32; }
+
+        /* Справочный материал */
+        .theory-box {
+            background: rgba(255,255,255,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid rgba(0,0,0,0.2);
+        }
+
+        /* Сетка для задач */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .task-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        /* Поле в клетку (УВЕЛИЧЕНО В 2 РАЗА) */
+        .graph-paper {
+            width: 100%;
+            min-height: 240px; /* Было 120px */
+            background-image: 
+                linear-gradient(to right, var(--cell-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--cell-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            padding: 10px;
+            outline: none;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* Кнопка проверки */
+        .check-btn {
+            align-self: flex-start;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .check-btn:hover { background-color: #45a049; }
+        
+        .section-equations .check-btn { background-color: #4a90e2; }
+        .section-equations .check-btn:hover { background-color: #357abd; }
+        
+        .section-inequalities .check-btn { background-color: #e67e22; }
+        .section-inequalities .check-btn:hover { background-color: #d35400; }
+
+        /* Блок для вывода правильного ответа */
+        .result-box {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #fcfcfc;
+            border: 2px dashed #999;
+            border-radius: 6px;
+            font-size: 1.1em;
+            display: none; /* Скрыто по умолчанию */
+        }
+        .result-box .label {
+            font-weight: bold;
+            color: #555;
+            margin-right: 5px;
+        }
+        .result-box .value {
+            color: #d35400;
+            font-weight: bold;
+        }
+
+        /* Специфичные стили для систем */
+        .system-layout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .system-brace {
+            font-size: 2.5em;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- РАЗДЕЛ 1: УРАВНЕНИЯ -->
+    <section class="section section-equations">
+        <h1>Показательные уравнения</h1>
+        
+        <div class="theory-box">
+            <h3>Справочные сведения</h3>
+            <p>При решении показательных уравнений пользуются следующим свойством показательной функции: если \(a > 0\) и \(a \neq 1\), то равенство \(a^{x_1} = a^{x_2}\) справедливо тогда и только тогда, когда \(x_1 = x_2\).</p>
+        </div>
+
+        <div class="tasks-grid">
+            <!-- Задание 2 -->
+            <div class="task-card">
+                <div class="task-title">2. \(0,3^{5 - 2x} = 0,09\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 1,5')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = 1,5</span></div>
+            </div>
+
+            <!-- Задание 3 -->
+            <div class="task-card">
+                <div class="task-title">3. \(\left(\frac{1}{5\sqrt{5}}\right)^x = \sqrt[3]{5}\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = -2/9')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = -2/9</span></div>
+            </div>
+
+            <!-- Задание 4 -->
+            <div class="task-card">
+                <div class="task-title">4. \(225 \cdot 15^{2x + 1} = 1\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = -1,5')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = -1,5</span></div>
+            </div>
+
+            <!-- Задание 5 -->
+            <div class="task-card">
+                <div class="task-title">5. \(43^x = 8^{2x}\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 0')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = 0</span></div>
+            </div>
+
+            <!-- Задание 6 -->
+            <div class="task-card">
+                <div class="task-title">6. \(3^{x - 2} - 3^{x - 3} = 6\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 4')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = 4</span></div>
+            </div>
+
+            <!-- Задание 7 -->
+            <div class="task-card">
+                <div class="task-title">7. \(25^x + 4 \cdot 5^x - 5 = 0\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 0')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = 0</span></div>
+            </div>
+
+            <!-- Задание 8 -->
+            <div class="task-card">
+                <div class="task-title">8. \(4^x - 12 \cdot 2^x + 32 = 0\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x₁ = 2; x₂ = 3')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x₁ = 2; x₂ = 3</span></div>
+            </div>
+
+            <!-- Задание 9 -->
+            <div class="task-card">
+                <div class="task-title">9. \(2^{\sqrt{x^2 + 1}} = 8\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = ±2√2')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = ±2√2</span></div>
+            </div>
+
+            <!-- Задание 10 -->
+            <div class="task-card">
+                <div class="task-title">10. \((0,2)^{x^2} \cdot 5^{2x + 2} = \left(\frac{1}{5}\right)^6\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x₁ = 4; x₂ = -2')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x₁ = 4; x₂ = -2</span></div>
+            </div>
+
+            <!-- Задание 11 -->
+            <div class="task-card">
+                <div class="task-title">11. \(2 \cdot 9^x - 17 \cdot 3^x = 9\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 2')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x = 2</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- РАЗДЕЛ 2: НЕРАВЕНСТВА -->
+    <section class="section section-inequalities">
+        <h1>Показательные неравенства</h1>
+        
+        <div class="theory-box">
+            <h3>Справочные сведения</h3>
+            <p>При решении показательных неравенств пользуются следующими свойствами показательной функции:</p>
+            <ol>
+                <li>если \(a > 1\), то неравенство \(a^{x_1} > a^{x_2}\) справедливо тогда и только тогда, когда \(x_1 > x_2\);</li>
+                <li>если \(0 < a < 1\), то неравенство \(a^{x_1} > a^{x_2}\) справедливо тогда и только тогда, когда \(x_1 < x_2\).</li>
+            </ol>
+        </div>
+
+        <div class="tasks-grid">
+            <!-- Задание 1 -->
+            <div class="task-card">
+                <div class="task-title">1. \(\left(\frac{2}{3}\right)^x > 1\frac{1}{2}\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x ∈ (-∞; -1)')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x ∈ (-∞; -1)</span></div>
+            </div>
+
+            <!-- Задание 2 -->
+            <div class="task-card">
+                <div class="task-title">2. \(9^{2x} \le \frac{1}{3}\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x ∈ (-∞; -1/4]')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x ∈ (-∞; -1/4]</span></div>
+            </div>
+
+            <!-- Задание 3 -->
+            <div class="task-card">
+                <div class="task-title">3. \(\left(\frac{1}{7}\right)^{x^2 - 9} \le 1\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x ∈ (-∞; -3] ∪ [3; +∞)')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x ∈ (-∞; -3] ∪ [3; +∞)</span></div>
+            </div>
+
+            <!-- Задание 4 -->
+            <div class="task-card">
+                <div class="task-title">4. \(4^x + 2^{x+1} - 80 < 0\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x ∈ (-∞; 3)')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x ∈ (-∞; 3)</span></div>
+            </div>
+
+            <!-- Задание 5 -->
+            <div class="task-card">
+                <div class="task-title">5. \(\left(\frac{1}{3}\right)^{\frac{1}{x}} < \frac{1}{27}\)</div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x ∈ (0; 1/3)')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">x ∈ (0; 1/3)</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- РАЗДЕЛ 3: СИСТЕМЫ -->
+    <section class="section section-systems">
+        <h1>Системы показательных уравнений</h1>
+        
+        <div class="theory-box">
+            <h3>Справочные сведения</h3>
+            <p>Для решения систем часто используют метод подстановки или алгебраического сложения, предварительно упростив уравнения с помощью свойств степеней.</p>
+        </div>
+
+        <div class="tasks-grid">
+            <!-- Блок 1 (Изображение 5, левый столбец) -->
+            
+            <!-- Система 3 (верхняя левая) -->
+            <div class="task-card">
+                <div class="task-title">Система 3:</div>
+                <div class="system-layout">
+                    <div class="system-brace">{</div>
+                    <div>
+                        <div>\(x + y = 1\)</div>
+                        <div>\(2^{x - y} = 8\)</div>
+                    </div>
+                </div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 2; y = -1')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">(2; -1)</span></div>
+            </div>
+
+            <!-- Система 1 (средняя левая) -->
+            <div class="task-card">
+                <div class="task-title">Система 1:</div>
+                <div class="system-layout">
+                    <div class="system-brace">{</div>
+                    <div>
+                        <div>\(4^x \cdot 2^y = 32\)</div>
+                        <div>\(3^{8x + 1} = 3^{3y}\)</div>
+                    </div>
+                </div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 1; y = 3')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">(1; 3)</span></div>
+            </div>
+
+            <!-- Система 1 (нижняя левая) -->
+            <div class="task-card">
+                <div class="task-title">Система 1:</div>
+                <div class="system-layout">
+                    <div class="system-brace">{</div>
+                    <div>
+                        <div>\(2^x + 2^y = 6\)</div>
+                        <div>\(2^x - 2^y = 2\)</div>
+                    </div>
+                </div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 2; y = 1')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">(2; 1)</span></div>
+            </div>
+
+            <!-- Блок 2 (Изображение 5, правый столбец) -->
+
+            <!-- Система 4 (верхняя правая) -->
+            <div class="task-card">
+                <div class="task-title">Система 4:</div>
+                <div class="system-layout">
+                    <div class="system-brace">{</div>
+                    <div>
+                        <div>\(x + 2y = 3\)</div>
+                        <div>\(3^{x - y} = 81\)</div>
+                    </div>
+                </div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 11/3; y = -1/3')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">(11/3; -1/3)</span></div>
+            </div>
+
+            <!-- Система 2 (средняя правая) -->
+            <div class="task-card">
+                <div class="task-title">Система 2:</div>
+                <div class="system-layout">
+                    <div class="system-brace">{</div>
+                    <div>
+                        <div>\(3^{3x - 2y} = 81\)</div>
+                        <div>\(3^{6x} \cdot 3^y = 27\)</div>
+                    </div>
+                </div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 2/3; y = -1')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">(2/3; -1)</span></div>
+            </div>
+
+            <!-- Система 2 (нижняя правая) -->
+            <div class="task-card">
+                <div class="task-title">Система 2:</div>
+                <div class="system-layout">
+                    <div class="system-brace">{</div>
+                    <div>
+                        <div>\(3^x + 5^y = 8\)</div>
+                        <div>\(3^x - 5^y = -2\)</div>
+                    </div>
+                </div>
+                <textarea class="graph-paper" placeholder="Место для решения..."></textarea>
+                <button class="check-btn" onclick="showAnswer(this, 'x = 1; y = 1')">Сверить ответ</button>
+                <div class="result-box"><span class="label">Правильный ответ:</span> <span class="value">(1; 1)</span></div>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // Функция для отображения правильного ответа
+    function showAnswer(button, answerText) {
+        // Находим карточку задачи, в которой находится кнопка
+        const taskCard = button.closest('.task-card');
+        
+        // Находим блок для вывода результата внутри этой карточки
+        const resultBox = taskCard.querySelector('.result-box');
+        
+        // Делаем блок видимым
+        resultBox.style.display = 'block';
+        
+        // Обновляем текст внутри блока правильным ответом
+        // (На случай, если захотите менять ответы динамически, хотя они прописаны в HTML)
+        const valueSpan = resultBox.querySelector('.value');
+        if (valueSpan) {
+            valueSpan.textContent = answerText;
+        }
+    }
+</script>
+
+</body>
+</html>
